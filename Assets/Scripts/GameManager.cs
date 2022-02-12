@@ -7,9 +7,8 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance = null;
-    public GameObject Question;
     public int levelNum = 1;
-    public string source = "Images/Questions/Level1/";
+    public string source;
     public Sprite[] level;
     public int correctNum = 0;
     public bool isCount = false; // countTimeを進めていいかどうかのフラグ
@@ -21,25 +20,22 @@ public class GameManager : MonoBehaviour
         if(instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(this.gameObject);
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
-            Destroy(this.gameObject);
+            Destroy(gameObject);
         }
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        // source = "Images/Questions/Level"+ num.ToString() + "/";
-        level = Resources.LoadAll<Sprite>(source);
-        System.Random r = new System.Random();
-        // Question.GetComponent<Image>().sprite = level[r.Next(3)];
+
     }
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }

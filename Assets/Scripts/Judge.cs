@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using UnityEngine.SceneManagement;
 
 public class Judge : MonoBehaviour
 {
@@ -11,7 +12,9 @@ public class Judge : MonoBehaviour
     [SerializeField] AudioClip wrongSound;
     [SerializeField] AudioClip passSound;
     [SerializeField] AudioSource soundSource;
+
     System.Random r = new System.Random();
+    int maxQuestionNum = 5;
 
     [SerializeField] Image judgeImage;
     [SerializeField] Sprite correct;
@@ -39,8 +42,10 @@ public class Judge : MonoBehaviour
         {
             stars[i].sprite = starNull;
         }
-        levelText.text = "Level.1";
+        levelText.text = "Level." + GameManager.instance.levelNum.ToString();
         judgeImage.color = new Color(0,0,0,0);
+        GameManager.instance.source = "Images/Questions/Level" + GameManager.instance.levelNum.ToString() + "/";
+        GameManager.instance.level = Resources.LoadAll<Sprite>(GameManager.instance.source);
         fadeSequence  = DOTween.Sequence()
         .Append(DOTween.ToAlpha(
             () => judgeImage.color,
@@ -58,7 +63,7 @@ public class Judge : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(GameManager.instance.isGameStart)
+        if(GameManager.instance.isGameStart && !timer.isPause)
         {
             if (Input.GetKeyDown(KeyCode.Y))
             {
@@ -68,10 +73,17 @@ public class Judge : MonoBehaviour
             {
                 FadeInOutJudge("wrong");
             }
-            if (Input.GetKeyDown(KeyCode.RightArrow)) 
+            if (Input.GetKeyDown(KeyCode.RightArrow))
             {
                 FadeInOutJudge("pass");
             }
+        }
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            GameManager.instance.isBeforeStart = false;
+            GameManager.instance.isCount = false;
+            GameManager.instance.isGameStart = false;
+            SceneManager.LoadScene("TitleScene");
         }
     }
     
@@ -101,6 +113,7 @@ public class Judge : MonoBehaviour
                             stars[i].sprite = starNull;
                         }
                         levelText.text = "Level." + GameManager.instance.levelNum.ToString();
+                        timer.Pause();
                     }
                 }
                 NextQ();
@@ -120,9 +133,9 @@ public class Judge : MonoBehaviour
         }
         fadeSequence.Restart();
     }
-    
+
     public void NextQ()
     {
-        GameManager.instance.Question.GetComponent<Image>().sprite = GameManager.instance.level[r.Next(3)];
+        timer.question.sprite = GameManager.instance.level[r.Next(maxQuestionNum)];
     }
 }
