@@ -7,24 +7,24 @@ public class Timer : MonoBehaviour
 {
     System.Random r = new System.Random();
     [SerializeField] public Image question;
-    [SerializeField] AudioClip cnt;
-    [SerializeField] AudioClip bgm;
-    [SerializeField] AudioClip pause;
-    [SerializeField] AudioClip end;
-    [SerializeField] AudioSource cntSource;
-    [SerializeField] AudioSource bgmSource;
+    [SerializeField] public AudioClip cnt;
+    [SerializeField] public AudioClip bgm;
+    [SerializeField] public AudioClip pause;
+    [SerializeField] public AudioClip end;
+    [SerializeField] public AudioSource cntSource;
+    [SerializeField] public AudioSource bgmSource;
     public float countTime = 0; // 時間をカウントするための汎用変数
-    int countDownNum = 0; // カウントダウン(3,2,1,0)が入る
-    [SerializeField] GameObject countDownPanel; // ゲーム開始カウントダウンのパネル
-    [SerializeField] Text countDownText; // ゲーム開始カウントダウンのテキスト
-    [SerializeField] Image countDownGauge; // ゲーム開始カウントダウンのゲージ
-    int timeLimit = 180;
+    public int countDownNum = 0; // カウントダウン(3,2,1,0)が入る
+    [SerializeField] public GameObject countDownPanel; // ゲーム開始カウントダウンのパネル
+    [SerializeField] public Text countDownText; // ゲーム開始カウントダウンのテキスト
+    [SerializeField] public Image countDownGauge; // ゲーム開始カウントダウンのゲージ
+    public int timeLimit = 180;
     public float left = 0; // 残り時間を扱うための変数
-    [SerializeField] Text leftTime; // 残り時間のテキスト
-    [SerializeField] Image timeGauge; // 残り時間のゲージ
-    float gaugeR, gaugeG, gaugeB;
+    [SerializeField] public Text leftTime; // 残り時間のテキスト
+    [SerializeField] public Image timeGauge; // 残り時間のゲージ
+    public float gaugeR, gaugeG, gaugeB;
     public bool isPause = false;
-    [SerializeField] Image pauseImage;
+    [SerializeField] public Image pauseImage;
 
     // Start is called before the first frame update
     void Start()

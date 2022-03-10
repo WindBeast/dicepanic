@@ -14,16 +14,19 @@ public class Judge : MonoBehaviour
     [SerializeField] AudioSource soundSource;
 
     System.Random r = new System.Random();
-    int maxQuestionNum = 5;
+    int maxQuestionNum = 20;
 
     [SerializeField] Image judgeImage;
     [SerializeField] Sprite correct;
     [SerializeField] Sprite wrong;
     [SerializeField] Sprite pass;
-    [SerializeField] Sprite starImage;
-    [SerializeField] Sprite starNull;
-    [SerializeField] Image[] stars;
-    [SerializeField] Text levelText;
+    // [SerializeField] Sprite starImage;
+    // [SerializeField] Sprite starNull;
+    // [SerializeField] Image[] stars;
+    // [SerializeField] Text levelText;
+
+    [SerializeField] Text floorText;
+    public int floorNum = 1;
 
     Sequence fadeSequence;
 
@@ -40,9 +43,11 @@ public class Judge : MonoBehaviour
     {
         for(int i=0; i<5; i++)
         {
-            stars[i].sprite = starNull;
+            // stars[i].sprite = starNull;
         }
-        levelText.text = "Level." + GameManager.instance.levelNum.ToString();
+        // levelText.text = "Level." + GameManager.instance.levelNum.ToString();
+        floorNum = 1;
+        floorText.text = "1";
         judgeImage.color = new Color(0,0,0,0);
         GameManager.instance.source = "Images/Questions/Level" + GameManager.instance.levelNum.ToString() + "/";
         GameManager.instance.level = Resources.LoadAll<Sprite>(GameManager.instance.source);
@@ -84,9 +89,11 @@ public class Judge : MonoBehaviour
             GameManager.instance.isCount = false;
             GameManager.instance.isGameStart = false;
             SceneManager.LoadScene("TitleScene");
+            GameManager.instance.correctNum = 0;
+            GameManager.instance.levelNum = 1;
         }
     }
-    
+
     public void FadeInOutJudge(string judgeText)
     {
         switch (judgeText)
@@ -95,24 +102,27 @@ public class Judge : MonoBehaviour
                 judgeImage.color = new Color(1,0,0,0);
                 judgeImage.sprite = correct;
                 soundSource.PlayOneShot(correctSound);
+                UpFloor();
                 if(GameManager.instance.correctNum < 5)
                 {
                     GameManager.instance.correctNum++;
-                    stars[GameManager.instance.correctNum-1].sprite = starImage;
+                    // stars[GameManager.instance.correctNum-1].sprite = starImage;
                 }
                 if(GameManager.instance.correctNum == 5)
                 {
-                    if(GameManager.instance.levelNum<3)
+                    if(GameManager.instance.levelNum<5)
                     {
                         GameManager.instance.correctNum = 0;
                         GameManager.instance.levelNum ++;
                         GameManager.instance.source = "Images/Questions/Level"+ GameManager.instance.levelNum.ToString() + "/";
                         GameManager.instance.level = Resources.LoadAll<Sprite>(GameManager.instance.source);
+                        /*
                         for(int i=0; i<5; i++)
                         {
                             stars[i].sprite = starNull;
                         }
                         levelText.text = "Level." + GameManager.instance.levelNum.ToString();
+                        */
                         timer.Pause();
                     }
                 }
@@ -127,7 +137,7 @@ public class Judge : MonoBehaviour
                 judgeImage.color = new Color(0,0.7f,0,0);
                 judgeImage.sprite = pass;
                 soundSource.PlayOneShot(passSound);
-                timer.countTime += 5;
+                timer.countTime += 0;
                 NextQ();
                 break;
         }
@@ -137,5 +147,11 @@ public class Judge : MonoBehaviour
     public void NextQ()
     {
         timer.question.sprite = GameManager.instance.level[r.Next(maxQuestionNum)];
+    }
+
+    public void UpFloor()
+    {
+        floorNum++;
+        floorText.text = floorNum.ToString();
     }
 }

@@ -6,19 +6,19 @@ using UnityEngine.SceneManagement;
 
 public class TitleScene : MonoBehaviour
 {
-    AsyncOperation mainScene;
+    // AsyncOperation mainScene;
     [SerializeField] Text progressText;
-    [SerializeField] Text mainText;
-    public bool isLoaded = false;
+    // [SerializeField] Text mainText;
+    // public bool isLoaded = false;
 
     // Start is called before the first frame update
     void Start()
     {
-        GameManager.instance.levelNum = 1;
-        GameManager.instance.correctNum = 0;
+        // GameManager.instance.levelNum = 1;
+        // GameManager.instance.correctNum = 0;
         progressText.text = "";
-        mainScene = SceneManager.LoadSceneAsync("MainScene");
-        mainScene.allowSceneActivation = false;
+        // mainScene = SceneManager.LoadSceneAsync("MainScene");
+        // mainScene.allowSceneActivation = false;
     }
 
     // Update is called once per frame
@@ -26,7 +26,15 @@ public class TitleScene : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            mainScene.allowSceneActivation = true;
+            // mainScene.allowSceneActivation = true;
         }
+    }
+
+    public void ToMain() {
+        SceneManager.LoadScene("MainScene");
+    }
+
+    public void ToStaff() {
+        SceneManager.LoadScene("StaffScene");
     }
 }
