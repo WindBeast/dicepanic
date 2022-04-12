@@ -8,13 +8,13 @@ public class OnlineManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     [PunRPC]
@@ -28,12 +28,22 @@ public class OnlineManager : MonoBehaviour
     }
 
     [PunRPC]
-    private void Back() {
-        GameManager.instance.Back();
+    private void NextScene() {
+        GameManager.instance.NextScene();
+    }
+
+    [PunRPC]
+    private void BackScene() {
+        GameManager.instance.BackScene();
     }
 
     [PunRPC]
     private void GameStart() {
         GameManager.instance.GameStart();
+    }
+
+    [PunRPC]
+    private void InputFloorNum(int num) {
+        GameManager.instance.InputFloorNum(num);
     }
 }

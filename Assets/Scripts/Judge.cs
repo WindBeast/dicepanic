@@ -14,7 +14,6 @@ public class Judge : MonoBehaviour
     [SerializeField] AudioSource soundSource;
 
     System.Random r = new System.Random();
-    int maxQuestionNum = 20;
 
     [SerializeField] Image judgeImage;
     [SerializeField] Sprite correct;
@@ -25,8 +24,8 @@ public class Judge : MonoBehaviour
     // [SerializeField] Image[] stars;
     // [SerializeField] Text levelText;
 
-    [SerializeField] Text floorText;
     public int floorNum = 1;
+    [SerializeField] public Text floorText;
 
     Sequence fadeSequence;
 
@@ -46,23 +45,22 @@ public class Judge : MonoBehaviour
             // stars[i].sprite = starNull;
         }
         // levelText.text = "Level." + GameManager.instance.levelNum.ToString();
-        floorNum = 1;
-        floorText.text = "1";
+        // floorNum = 1;
+        floorText.text = floorNum.ToString();
         judgeImage.color = new Color(0,0,0,0);
-        GameManager.instance.source = "Images/Questions/Level" + GameManager.instance.levelNum.ToString() + "/";
-        GameManager.instance.level = Resources.LoadAll<Sprite>(GameManager.instance.source);
+        NextQ();
         fadeSequence  = DOTween.Sequence()
-        .Append(DOTween.ToAlpha(
-            () => judgeImage.color,
-            color => judgeImage.color = color,
-            1f,
-            fadeTime))
-        .Append(DOTween.ToAlpha(
-            () => judgeImage.color,
-            color => judgeImage.color = color,
-            0f,
-            fadeTime))
-        .SetAutoKill(false);
+                                .Append(DOTween.ToAlpha(
+                                    () => judgeImage.color,
+                                    color => judgeImage.color = color,
+                                    1f,
+                                    fadeTime))
+                                .Append(DOTween.ToAlpha(
+                                    () => judgeImage.color,
+                                    color => judgeImage.color = color,
+                                    0f,
+                                    fadeTime))
+                                .SetAutoKill(false);
     }
 
     // Update is called once per frame
@@ -103,29 +101,7 @@ public class Judge : MonoBehaviour
                 judgeImage.sprite = correct;
                 soundSource.PlayOneShot(correctSound);
                 UpFloor();
-                if(GameManager.instance.correctNum < 5)
-                {
-                    GameManager.instance.correctNum++;
-                    // stars[GameManager.instance.correctNum-1].sprite = starImage;
-                }
-                if(GameManager.instance.correctNum == 5)
-                {
-                    if(GameManager.instance.levelNum<5)
-                    {
-                        GameManager.instance.correctNum = 0;
-                        GameManager.instance.levelNum ++;
-                        GameManager.instance.source = "Images/Questions/Level"+ GameManager.instance.levelNum.ToString() + "/";
-                        GameManager.instance.level = Resources.LoadAll<Sprite>(GameManager.instance.source);
-                        /*
-                        for(int i=0; i<5; i++)
-                        {
-                            stars[i].sprite = starNull;
-                        }
-                        levelText.text = "Level." + GameManager.instance.levelNum.ToString();
-                        */
-                        timer.Pause();
-                    }
-                }
+                if(floorNum==7 || floorNum==13 || floorNum==19 || floorNum==27) timer.Pause();
                 NextQ();
                 break;
             case "wrong":
@@ -137,7 +113,7 @@ public class Judge : MonoBehaviour
                 judgeImage.color = new Color(0,0.7f,0,0);
                 judgeImage.sprite = pass;
                 soundSource.PlayOneShot(passSound);
-                timer.countTime += 0;
+                timer.countTime += timer.passTime;
                 NextQ();
                 break;
         }
@@ -146,7 +122,10 @@ public class Judge : MonoBehaviour
 
     public void NextQ()
     {
-        timer.question.sprite = GameManager.instance.level[r.Next(maxQuestionNum)];
+        GameManager.instance.source = "Images/Questions/"+ floorNum.ToString() + "/";
+        GameManager.instance.level = Resources.LoadAll<Sprite>(GameManager.instance.source);
+        Debug.Log(GameManager.instance.level);
+        timer.question.sprite = GameManager.instance.level[r.Next(GameManager.instance.level.Length)];
     }
 
     public void UpFloor()

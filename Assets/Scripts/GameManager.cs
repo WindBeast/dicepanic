@@ -3,27 +3,39 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviourPunCallbacks
 {
+    public int maxQuestionNum = 20; // 1レベルあたりのMAX問題数(ここの仕様変わるのであまり気にしなくてよい)
+
     public static GameManager instance = null;
 
     [SerializeField] GameObject setting;
     [SerializeField] GameObject questionScene;
+    [SerializeField] GameObject inputFloorScene;
+    [SerializeField] GameObject resultScene;
+    [SerializeField] GameObject titleScene;
 
     [SerializeField] private Text connectionCheck;
     [SerializeField] private Text clientCheck;
+
+    [SerializeField] private Text floorNumForInput;
+    [SerializeField] private Text resultNum;
+
     [SerializeField] private Judge judge;
     [SerializeField] private Timer timer;
 
-    public int levelNum = 1;
-    public string source;
-    public Sprite[] level;
-    public int correctNum = 0;
-    public bool isCount = false; // countTimeを進めていいかどうかのフラグ
+    public int levelNum = 1; // 内部レベルのための変数。
+    public string source; // 画像が置かれている場所のURL
+    public Sprite[] level; // 画像がたくさん入る
+    public int correctNum = 0; // 正解数を記録する？要らない？
+
+    public bool isCount = false; // countTime(カウントダウンタイマー)を進めていいかどうかのフラグ。
+    // ポーズ中は止まる。ゲーム開始前(要確認)にfalse。
     public bool isBeforeStart = false; // ゲーム開始カウントダウン中かどうかのフラグ
     public bool isGameStart = false; // ゲーム中かどうかのフラグ
 
@@ -46,6 +58,10 @@ public class GameManager : MonoBehaviourPunCallbacks
         clientCheck.text = "スタッフ端末待機中…";
         connectionCheck.text = "サーバー接続中…";
 
+        floorNumForInput.text = "";
+
+        ChangeScene("title");
+
         // プレイヤー自身の名前を設定する
         PhotonNetwork.NickName = "Host";
 
@@ -55,15 +71,10 @@ public class GameManager : MonoBehaviourPunCallbacks
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.B))
+        if (Input.GetKeyDown(KeyCode.S))
         {
-            setting.SetActive(true);
-            questionScene.SetActive(false);
-        }
-        if (Input.GetKeyDown(KeyCode.G))
-        {
-            setting.SetActive(false);
-            questionScene.SetActive(true);
+            if(setting.activeSelf) setting.SetActive(false);
+            else setting.SetActive(true);
         }
     }
 
@@ -88,10 +99,13 @@ public class GameManager : MonoBehaviourPunCallbacks
     }
 
     public void Judge(string judgeText) {
+        // ゲームスタート中であり、ポーズ中でなければジャッジをしてくれる。
         if(isGameStart && !timer.isPause) judge.FadeInOutJudge(judgeText);
     }
 
     public void Pause() {
+        // ゲームスタート中ならばポーズを切り替える
+        // ダイス追加の説明をするタイミングでもポーズになる
         if(isGameStart) {
             if(timer.isPause) timer.UnPause();
             else timer.Pause();
@@ -99,6 +113,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     }
 
     public void Back() {
+        // 色々な設定をリセットして階数入力画面に戻る(仕様について要検討)
         isBeforeStart = false;
         isCount = false;
         isGameStart = false;
@@ -106,15 +121,63 @@ public class GameManager : MonoBehaviourPunCallbacks
     }
 
     public void GameStart() {
-        if(timer.countDownNum == 3 && !isBeforeStart)
+        // ゲームスタート前で、カウントダウン数字が3であればカウントダウンを始める
+        if(timer.countDownNum == 3 && !isBeforeStart && questionScene.activeSelf)
             {
-                setting.SetActive(false);
-                questionScene.SetActive(true);
-                isCount = true;
-                isBeforeStart = true;
-                timer.countDownPanel.SetActive(true);
-                timer.cntSource.PlayOneShot(timer.cnt);
-                timer.countDownGauge.enabled = true;
+                isCount = true; // カウントダウンタイマーをスタート
+                isBeforeStart = true; // カウントダウン中フラグを立てる
+                timer.countDownPanel.SetActive(true); // カウントダウンパネルを表示
+                timer.cntSource.PlayOneShot(timer.cnt); // カウントダウンSEを鳴らす
+                timer.countDownGauge.enabled = true; // カウントダウンゲージを表示させる
+                judge.NextQ();
             }
+    }
+
+    public void InputFloorNum(int num) {
+        floorNumForInput.text = num.ToString();
+        judge.floorNum = num+1;
+    }
+
+    public void ChangeScene(string name) {
+        titleScene.SetActive(false);
+        inputFloorScene.SetActive(false);
+        questionScene.SetActive(false);
+        resultScene.SetActive(false);
+        switch(name) {
+            case "title":
+                titleScene.SetActive(true);
+                break;
+            case "input":
+                inputFloorScene.SetActive(true);
+                break;
+            case "question":
+                questionScene.SetActive(true);
+                break;
+            case "result":
+                resultScene.SetActive(true);
+                break;
+        }
+    }
+
+    public void NextScene() {
+        if(titleScene.activeSelf) ChangeScene("input");
+        else if(inputFloorScene.activeSelf) {
+            ChangeScene("question");
+            judge.floorText.text = judge.floorNum.ToString();
+        }
+        else if(resultScene.activeSelf) ChangeScene("title");
+    }
+
+    public void BackScene() {
+        if(inputFloorScene.activeSelf) ChangeScene("title");
+        else if(!isBeforeStart && !isGameStart && questionScene.activeSelf) ChangeScene("input");
+    }
+
+    public void GoToResult() {
+        resultNum.text = (judge.floorNum-1).ToString();
+        ChangeScene("result");
+        timer.ResetTimer();
+        judge.floorNum = 1;
+        InputFloorNum(0);
     }
 }

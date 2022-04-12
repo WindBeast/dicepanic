@@ -43,6 +43,11 @@ MonoBehaviour:
   - Back
   - GameStart
   - Pause
+  - InputFloorNum
+  - BackToInput
+  - GoToMain
+  - BackScene
+  - NextScene
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

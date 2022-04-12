@@ -2,44 +2,40 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class Timer : MonoBehaviour
 {
-    System.Random r = new System.Random();
-    [SerializeField] public Image question;
-    [SerializeField] public AudioClip cnt;
-    [SerializeField] public AudioClip bgm;
-    [SerializeField] public AudioClip pause;
-    [SerializeField] public AudioClip end;
-    [SerializeField] public AudioSource cntSource;
-    [SerializeField] public AudioSource bgmSource;
+    public int timeLimit = 180; // 制限時間
+    public int passTime = 10; // パスをしたときに減る時間
+
+    System.Random r = new System.Random(); // ランダム変数を用意
+    [SerializeField] public Image question; // 問題表示用イメージオブジェクト
+    [SerializeField] public AudioClip cnt; // カウントダウンSE
+    [SerializeField] public AudioClip bgm; // BGM
+    [SerializeField] public AudioClip pause; // ポーズSE
+    [SerializeField] public AudioClip end; // 制限時間終了SE
+    [SerializeField] public AudioSource cntSource; // SE用ソース
+    [SerializeField] public AudioSource bgmSource; // BGM用ソース
+
     public float countTime = 0; // 時間をカウントするための汎用変数
     public int countDownNum = 0; // カウントダウン(3,2,1,0)が入る
     [SerializeField] public GameObject countDownPanel; // ゲーム開始カウントダウンのパネル
     [SerializeField] public Text countDownText; // ゲーム開始カウントダウンのテキスト
     [SerializeField] public Image countDownGauge; // ゲーム開始カウントダウンのゲージ
-    public int timeLimit = 180;
     public float left = 0; // 残り時間を扱うための変数
     [SerializeField] public Text leftTime; // 残り時間のテキスト
     [SerializeField] public Image timeGauge; // 残り時間のゲージ
-    public float gaugeR, gaugeG, gaugeB;
-    public bool isPause = false;
-    [SerializeField] public Image pauseImage;
+    public float gaugeR, gaugeG, gaugeB; //ゲージのRGBを扱うための変数
+
+    public bool isPause = false; // ポーズ中か否かを判定する変数
+    [SerializeField] public Image pauseImage; // ポーズ中の画像
+    [SerializeField] public Image timeUpImage; // time upの画像
 
     // Start is called before the first frame update
     void Start()
     {
-        timeGauge.color = new Color(0.5f,1f,0.5f);
-        countTime = 0;
-        countDownNum = 3;
-        countDownText.text = "3";
-        countDownPanel.SetActive(false);
-        leftTime.text = timeLimit.ToString();
-        pauseImage.enabled = false;
-        leftTime.text = timeLimit.ToString();
-        isPause = false;
-        timeGauge.fillAmount = 1;
-        question.enabled = false;
+        ResetTimer();
     }
 
     // Update is called once per frame
@@ -77,7 +73,7 @@ public class Timer : MonoBehaviour
             countTime += Time.deltaTime;
         }
 
-        if(GameManager.instance.isBeforeStart)
+        if(GameManager.instance.isBeforeStart) // こっちは開始前カウントダウン中に動く
         {
             if(countTime < 1)
             {
@@ -89,11 +85,11 @@ public class Timer : MonoBehaviour
                 {
                     countTime = 0;
                     countDownNum--;
-                    GameManager.instance.isBeforeStart = false;
-                    GameManager.instance.isGameStart = true;
-                    Debug.Log("test 1");
-                    question.sprite = GameManager.instance.level[r.Next(3)];
-                    Debug.Log("test 2");
+                    GameManager.instance.isBeforeStart = false; // カウントダウン中ではなくなる
+                    GameManager.instance.isGameStart = true; // ゲーム中になる
+                    // Debug.Log("test 1");
+                    // question.sprite = GameManager.instance.level[r.Next(GameManager.instance.level.Length)];
+                    // Debug.Log("test 2");
                     countDownGauge.enabled = false;
                     countDownText.enabled = false;
                     countDownPanel.SetActive(false);
@@ -135,6 +131,9 @@ public class Timer : MonoBehaviour
                 GameManager.instance.isGameStart = false;
                 bgmSource.Stop();
                 cntSource.PlayOneShot(end);
+                timeUpImage.enabled = true;
+                countDownPanel.SetActive(true);
+                DOVirtual.DelayedCall(4f, () => GameManager.instance.GoToResult()).Play();
             }
         }
 
@@ -169,5 +168,23 @@ public class Timer : MonoBehaviour
         pauseImage.enabled = false;
         question.enabled = true;
         isPause = !isPause;
+    }
+
+    public void ResetTimer() {
+        timeGauge.color = new Color(0.5f,1f,0.5f);
+        timeGauge.fillAmount = 1;
+        countTime = 0;
+        leftTime.text = timeLimit.ToString();
+
+        countDownNum = 3;
+        countDownText.text = "3";
+        countDownPanel.SetActive(false);
+
+        pauseImage.enabled = false;
+        timeUpImage.enabled = false;
+        isPause = false;
+
+        question.enabled = false;
+        countDownText.enabled = true;
     }
 }

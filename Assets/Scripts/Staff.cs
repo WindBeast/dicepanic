@@ -11,9 +11,10 @@ public class Staff : MonoBehaviourPunCallbacks
     [SerializeField] private Text viewCheck;
     [SerializeField] private Text floorNumText;
 
-    private PhotonView hostView;
+    [SerializeField] private GameObject floor;
+    [SerializeField] private GameObject controller;
 
-    private bool isConnected = false;
+    private PhotonView hostView;
 
     private int floorNum = 0;
 
@@ -24,11 +25,12 @@ public class Staff : MonoBehaviourPunCallbacks
         // プレイヤー自身の名前を"Player"に設定する
         PhotonNetwork.NickName = "Staff";
         Connect();
+        floor.SetActive(true);
+        controller.SetActive(false);
     }
 
     // マスターサーバーへの接続が成功した時に呼ばれるコールバック
     public override void OnConnectedToMaster() {
-        isConnected = true;
         // "Game"という名前のルームに参加する
         PhotonNetwork.JoinRoom("Game");
     }
@@ -36,7 +38,6 @@ public class Staff : MonoBehaviourPunCallbacks
     // ゲームサーバーへの接続が成功した時に呼ばれるコールバック
     public override void OnJoinedRoom() {
         connectionCheck.text = "接続成功";
-        isConnected = true;
     }
 
     // ゲームサーバーへの接続が失敗した時に呼ばれるコールバック
@@ -45,11 +46,12 @@ public class Staff : MonoBehaviourPunCallbacks
     }
 
     public void Connect() {
-        connectionCheck.text = "接続中";
-        if (!isConnected) {
+        if (!PhotonNetwork.IsConnected) {
+            connectionCheck.text = "接続中";
             // PhotonServerSettingsの設定内容を使ってマスターサーバーへ接続する
             PhotonNetwork.ConnectUsingSettings();
-        } else {
+        } else if(!PhotonNetwork.InRoom) {
+            connectionCheck.text = "接続中";
             PhotonNetwork.JoinRoom("Game");
         }
     }
@@ -61,6 +63,16 @@ public class Staff : MonoBehaviourPunCallbacks
         } else {
             viewCheck.text = "取得失敗";
         }
+    }
+
+    public void ToInputFloor() {
+        controller.SetActive(false);
+        floor.SetActive(true);
+    }
+
+    public void ToController() {
+        floor.SetActive(false);
+        controller.SetActive(true);
     }
 
     public void InputNum(int num) {
@@ -78,7 +90,9 @@ public class Staff : MonoBehaviourPunCallbacks
     }
 
     public void SendNum() {
-
+        hostView.RPC("InputFloorNum", hostView.Owner, floorNum);
+        floorNum = 0;
+        floorNumText.text  = floorNum.ToString();
     }
 
     public void Judge(string judgeText) {
@@ -89,8 +103,12 @@ public class Staff : MonoBehaviourPunCallbacks
         hostView.RPC("Pause", hostView.Owner);
     }
 
-    public void Back() {
-        hostView.RPC("Back", hostView.Owner);
+    public void NextScene() {
+        hostView.RPC("NextScene", hostView.Owner);
+    }
+
+    public void BackScene() {
+        hostView.RPC("BackScene", hostView.Owner);
     }
 
     public void GameStart() {
