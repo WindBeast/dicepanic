@@ -15,7 +15,7 @@ public class Timer : MonoBehaviour
     [SerializeField] public AudioClip bgm; // BGM
     [SerializeField] public AudioClip pause; // ポーズSE
     [SerializeField] public AudioClip end; // 制限時間終了SE
-    [SerializeField] public AudioSource cntSource; // SE用ソース
+    [SerializeField] public AudioSource cntSource; // SE用ソース ソース=オーディオプレイヤー
     [SerializeField] public AudioSource bgmSource; // BGM用ソース
 
     public float countTime = 0; // 時間をカウントするための汎用変数

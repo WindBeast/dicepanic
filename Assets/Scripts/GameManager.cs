@@ -20,8 +20,24 @@ public class GameManager : MonoBehaviourPunCallbacks
     [SerializeField] GameObject resultScene;
     [SerializeField] GameObject titleScene;
 
+    [SerializeField] public AudioClip titleBgm;
+    [SerializeField] public AudioClip inputFloorBgm;
+    [SerializeField] public AudioClip resultBgm;
+    [SerializeField] public AudioSource allBgmSource; // (allはTimerのsourceとの区別)
+    [SerializeField] public AudioClip choiceSE1; // タイトル画面から次の画面への遷移音
+    [SerializeField] public AudioClip choiceSE2; // 最高到達問題数入力音
+    [SerializeField] public AudioClip choiceSE3; // 問題数入力画面から出題画面への遷移音
+    [SerializeField] public AudioClip choiceSE4; // 出題画面からスコア画面への遷移音
+    [SerializeField] public AudioClip scoreSE1; // スコア画面で使うSE
+    [SerializeField] public AudioSource allSoundSource; // (allはTimerのsourceとの区別)
+
     [SerializeField] private Text connectionCheck;
     [SerializeField] private Text clientCheck;
+
+    [SerializeField] private Image logo;
+    private RectTransform logoRect;
+    [SerializeField] private Image logoShadow;
+    private RectTransform logoShadowRect;
 
     [SerializeField] private Text floorNumForInput;
     [SerializeField] private Text resultNum;
@@ -55,6 +71,8 @@ public class GameManager : MonoBehaviourPunCallbacks
     // Start is called before the first frame update
     void Start()
     {
+        Cursor.visible = false;
+
         clientCheck.text = "スタッフ端末待機中…";
         connectionCheck.text = "サーバー接続中…";
 
@@ -67,6 +85,11 @@ public class GameManager : MonoBehaviourPunCallbacks
 
         // PhotonServerSettingsの設定内容を使ってマスターサーバーへ接続する
         PhotonNetwork.ConnectUsingSettings();
+
+        logoRect = logo.GetComponent<RectTransform>();
+        logoRect.DOMoveY(0.2f, 1.5f).SetRelative(true).SetEase(Ease.OutCubic).SetLoops(-1, LoopType.Yoyo);
+        logoShadowRect = logoShadow.GetComponent<RectTransform>();
+        logoShadowRect.DOMoveY(-0.1f, 1.5f).SetRelative(true).SetEase(Ease.OutCubic).SetLoops(-1, LoopType.Yoyo);
     }
     // Update is called once per frame
     void Update()
@@ -134,6 +157,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     }
 
     public void InputFloorNum(int num) {
+        allSoundSource.PlayOneShot(choiceSE2);
         floorNumForInput.text = num.ToString();
         judge.floorNum = num+1;
     }
@@ -145,12 +169,19 @@ public class GameManager : MonoBehaviourPunCallbacks
         resultScene.SetActive(false);
         switch(name) {
             case "title":
+                allBgmSource.clip = titleBgm;
+                allBgmSource.Play();
                 titleScene.SetActive(true);
                 break;
             case "input":
+                allSoundSource.PlayOneShot(choiceSE1);
+                allBgmSource.clip = inputFloorBgm;
+                allBgmSource.Play();
                 inputFloorScene.SetActive(true);
                 break;
             case "question":
+                allSoundSource.PlayOneShot(choiceSE3);
+                allBgmSource.Stop();
                 questionScene.SetActive(true);
                 break;
             case "result":
