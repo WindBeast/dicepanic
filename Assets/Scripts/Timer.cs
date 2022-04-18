@@ -48,6 +48,7 @@ public class Timer : MonoBehaviour
                 GameManager.instance.isCount = true;
                 GameManager.instance.isBeforeStart = true;
                 countDownPanel.SetActive(true);
+                cntSource.volume = 0.7f;
                 cntSource.PlayOneShot(cnt);
                 countDownGauge.enabled = true;
             }
@@ -130,6 +131,7 @@ public class Timer : MonoBehaviour
                 GameManager.instance.isCount = false;
                 GameManager.instance.isGameStart = false;
                 bgmSource.Stop();
+                cntSource.volume = 0.3f;
                 cntSource.PlayOneShot(end);
                 timeUpImage.enabled = true;
                 countDownPanel.SetActive(true);

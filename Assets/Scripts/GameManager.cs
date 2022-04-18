@@ -41,6 +41,8 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     [SerializeField] private Text floorNumForInput;
     [SerializeField] private Text resultNum;
+    [SerializeField] private Text cardText;
+    // [SerializeField] private Text testText;
 
     [SerializeField] private Judge judge;
     [SerializeField] private Timer timer;
@@ -76,7 +78,8 @@ public class GameManager : MonoBehaviourPunCallbacks
         clientCheck.text = "スタッフ端末待機中…";
         connectionCheck.text = "サーバー接続中…";
 
-        floorNumForInput.text = "";
+        judge.floorNum = 1;
+        floorNumForInput.text = "0";
 
         ChangeScene("title");
 
@@ -87,9 +90,11 @@ public class GameManager : MonoBehaviourPunCallbacks
         PhotonNetwork.ConnectUsingSettings();
 
         logoRect = logo.GetComponent<RectTransform>();
-        logoRect.DOMoveY(0.2f, 1.5f).SetRelative(true).SetEase(Ease.OutCubic).SetLoops(-1, LoopType.Yoyo);
+        logoRect.DOMoveY(0.2f, 1.5f).SetRelative(true).SetEase(Ease.InOutSine).SetLoops(-1, LoopType.Yoyo);
         logoShadowRect = logoShadow.GetComponent<RectTransform>();
-        logoShadowRect.DOMoveY(-0.1f, 1.5f).SetRelative(true).SetEase(Ease.OutCubic).SetLoops(-1, LoopType.Yoyo);
+        logoShadowRect.DOMoveY(-0.1f, 1.5f).SetRelative(true).SetEase(Ease.InOutSine).SetLoops(-1, LoopType.Yoyo);
+
+        cardText.DOFade(0f, 2f).SetEase(Ease.InQuad).SetLoops(-1, LoopType.Yoyo);
     }
     // Update is called once per frame
     void Update()
@@ -169,11 +174,13 @@ public class GameManager : MonoBehaviourPunCallbacks
         resultScene.SetActive(false);
         switch(name) {
             case "title":
+                allBgmSource.volume = 0.4f;
                 allBgmSource.clip = titleBgm;
                 allBgmSource.Play();
                 titleScene.SetActive(true);
                 break;
             case "input":
+                allBgmSource.volume = 0.3f;
                 allSoundSource.PlayOneShot(choiceSE1);
                 allBgmSource.clip = inputFloorBgm;
                 allBgmSource.Play();
@@ -185,6 +192,8 @@ public class GameManager : MonoBehaviourPunCallbacks
                 questionScene.SetActive(true);
                 break;
             case "result":
+                allBgmSource.clip = resultBgm;
+                allBgmSource.Play();
                 resultScene.SetActive(true);
                 break;
         }
@@ -209,6 +218,6 @@ public class GameManager : MonoBehaviourPunCallbacks
         ChangeScene("result");
         timer.ResetTimer();
         judge.floorNum = 1;
-        InputFloorNum(0);
+        floorNumForInput.text = "0";
     }
 }
