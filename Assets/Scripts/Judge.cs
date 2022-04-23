@@ -76,7 +76,7 @@ public class Judge : MonoBehaviour
             {
                 FadeInOutJudge("wrong");
             }
-            if (Input.GetKeyDown(KeyCode.RightArrow))
+            if (Input.GetKeyDown(KeyCode.C))
             {
                 FadeInOutJudge("pass");
             }
@@ -101,7 +101,7 @@ public class Judge : MonoBehaviour
                 judgeImage.sprite = correct;
                 soundSource.PlayOneShot(correctSound);
                 UpFloor();
-                if(floorNum==7 || floorNum==13 || floorNum==19 || floorNum==27) timer.Pause();
+                if(floorNum==4 || floorNum==9 || floorNum==15 || floorNum==24) timer.Pause();
                 NextQ();
                 break;
             case "wrong":

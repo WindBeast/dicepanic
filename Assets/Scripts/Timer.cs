@@ -7,7 +7,7 @@ using DG.Tweening;
 public class Timer : MonoBehaviour
 {
     public int timeLimit = 180; // 制限時間
-    public int passTime = 10; // パスをしたときに減る時間
+    public int passTime = 0; // パスをしたときに減る時間
 
     System.Random r = new System.Random(); // ランダム変数を用意
     [SerializeField] public Image question; // 問題表示用イメージオブジェクト

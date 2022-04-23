@@ -1917,7 +1917,7 @@ MonoBehaviour:
   judgeImage: {fileID: 815353668}
   correct: {fileID: 21300000, guid: d2a839c271e55044c820a177fa585d0e, type: 3}
   wrong: {fileID: 21300000, guid: 8157fb6d2c0760c4797be0a248d55bc5, type: 3}
-  pass: {fileID: 21300000, guid: 9dc21af1bdf209945b5f7afcb2eee37c, type: 3}
+  pass: {fileID: 21300000, guid: 1d16c481b6c5d8f46ab18e312b577ced, type: 3}
   floorNum: 1
   floorText: {fileID: 1213222402}
 --- !u!1 &824918535
@@ -2342,7 +2342,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timeLimit: 180
-  passTime: 10
+  passTime: 0
   question: {fileID: 1324082296}
   cnt: {fileID: 8300000, guid: 08bb89fa1883726488237e60f52debd2, type: 3}
   bgm: {fileID: 8300000, guid: db81437ecbc026e4db1a732ee281a258, type: 3}
@@ -9821,7 +9821,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2082823974
 RectTransform:
   m_ObjectHideFlags: 0
@@ -9900,7 +9900,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 0
-  m_SortingLayerID: -1054417509
+  m_SortingLayerID: -638624485
   m_SortingOrder: 0
   m_TargetDisplay: 0
 --- !u!1001 &7888624463843025481

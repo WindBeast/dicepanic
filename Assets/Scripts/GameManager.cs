@@ -103,6 +103,14 @@ public class GameManager : MonoBehaviourPunCallbacks
             if(setting.activeSelf) setting.SetActive(false);
             else setting.SetActive(true);
         }
+        if (Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            NextScene();
+        }
+        if (Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            BackScene();
+        }
     }
 
 

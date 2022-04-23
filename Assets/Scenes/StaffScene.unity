@@ -560,7 +560,7 @@ GameObject:
   - component: {fileID: 108553245}
   - component: {fileID: 108553244}
   m_Layer: 5
-  m_Name: Pass
+  m_Name: Change
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1016,7 +1016,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u30D1\u30B9"
+  m_Text: "\u30C1\u30A7\u30F3\u30B8"
 --- !u!222 &172523610
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1674,7 +1674,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &376365744
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2962,7 +2962,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &850183850
 RectTransform:
   m_ObjectHideFlags: 0
