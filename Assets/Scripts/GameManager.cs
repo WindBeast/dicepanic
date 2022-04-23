@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     public static GameManager instance = null;
 
+    [SerializeField] GameObject roomPanel;
     [SerializeField] GameObject setting;
     [SerializeField] GameObject questionScene;
     [SerializeField] GameObject inputFloorScene;
@@ -47,6 +48,8 @@ public class GameManager : MonoBehaviourPunCallbacks
     [SerializeField] private Judge judge;
     [SerializeField] private Timer timer;
 
+    public int roomNum = 0;
+
     public int levelNum = 1; // 内部レベルのための変数。
     public string source; // 画像が置かれている場所のURL
     public Sprite[] level; // 画像がたくさん入る
@@ -73,8 +76,6 @@ public class GameManager : MonoBehaviourPunCallbacks
     // Start is called before the first frame update
     void Start()
     {
-        Cursor.visible = false;
-
         clientCheck.text = "スタッフ端末待機中…";
         connectionCheck.text = "サーバー接続中…";
 
@@ -82,12 +83,10 @@ public class GameManager : MonoBehaviourPunCallbacks
         floorNumForInput.text = "0";
 
         ChangeScene("title");
+        roomPanel.SetActive(true);
 
         // プレイヤー自身の名前を設定する
         PhotonNetwork.NickName = "Host";
-
-        // PhotonServerSettingsの設定内容を使ってマスターサーバーへ接続する
-        PhotonNetwork.ConnectUsingSettings();
 
         logoRect = logo.GetComponent<RectTransform>();
         logoRect.DOMoveY(0.2f, 1.5f).SetRelative(true).SetEase(Ease.InOutSine).SetLoops(-1, LoopType.Yoyo);
@@ -106,10 +105,19 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
     }
 
+
+    // ルームナンバーを選んでサーバーに接続
+    public void ChoiceRoom(int num) {
+        roomNum = num;
+        roomPanel.SetActive(false);
+        Cursor.visible = false;
+        // PhotonServerSettingsの設定内容を使ってマスターサーバーへ接続する
+        PhotonNetwork.ConnectUsingSettings();
+    }
     // マスターサーバーへの接続が成功した時に呼ばれるコールバック
     public override void OnConnectedToMaster() {
     // "Game"という名前のルームに参加する（ルームが存在しなければ作成して参加する）
-        PhotonNetwork.JoinOrCreateRoom("Game", new RoomOptions(), TypedLobby.Default);
+        PhotonNetwork.JoinOrCreateRoom(("Room" + roomNum.ToString()), new RoomOptions(), TypedLobby.Default);
     }
 
     // ゲームサーバーへの接続が成功した時に呼ばれるコールバック

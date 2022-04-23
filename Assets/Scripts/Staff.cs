@@ -13,26 +13,45 @@ public class Staff : MonoBehaviourPunCallbacks
 
     [SerializeField] private GameObject floor;
     [SerializeField] private GameObject controller;
+    [SerializeField] private GameObject roomPanel;
 
     private PhotonView hostView;
 
+    private int roomNumStaff;
     private int floorNum = 0;
 
     private void Start() {
-        Connect();
+        connectionCheck.text = "接続待機";
         viewCheck.text = "取得待機";
         floorNumText.text = "0";
         // プレイヤー自身の名前を"Player"に設定する
         PhotonNetwork.NickName = "Staff";
-        Connect();
         floor.SetActive(true);
         controller.SetActive(false);
+        roomPanel.SetActive(true);
     }
+
+    public void ChoiceRoomStaff(int num) {
+        roomNumStaff = num;
+        roomPanel.SetActive(false);
+        Connect();
+    }
+    public void Connect() {
+        if (!PhotonNetwork.IsConnected) {
+            connectionCheck.text = "接続中";
+            // PhotonServerSettingsの設定内容を使ってマスターサーバーへ接続する
+            PhotonNetwork.ConnectUsingSettings();
+        } else if(!PhotonNetwork.InRoom) {
+            connectionCheck.text = "接続中";
+            PhotonNetwork.JoinRoom(("Room" + roomNumStaff.ToString()));
+        }
+    }
+
 
     // マスターサーバーへの接続が成功した時に呼ばれるコールバック
     public override void OnConnectedToMaster() {
         // "Game"という名前のルームに参加する
-        PhotonNetwork.JoinRoom("Game");
+        PhotonNetwork.JoinRoom(("Room" + roomNumStaff.ToString()));
     }
 
     // ゲームサーバーへの接続が成功した時に呼ばれるコールバック
@@ -45,16 +64,6 @@ public class Staff : MonoBehaviourPunCallbacks
         connectionCheck.text = "接続失敗";
     }
 
-    public void Connect() {
-        if (!PhotonNetwork.IsConnected) {
-            connectionCheck.text = "接続中";
-            // PhotonServerSettingsの設定内容を使ってマスターサーバーへ接続する
-            PhotonNetwork.ConnectUsingSettings();
-        } else if(!PhotonNetwork.InRoom) {
-            connectionCheck.text = "接続中";
-            PhotonNetwork.JoinRoom("Game");
-        }
-    }
 
     public void GetHostView() {
         if(GameObject.Find("OnlineManager(Clone)")!=null) {
