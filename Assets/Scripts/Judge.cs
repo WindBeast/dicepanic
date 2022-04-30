@@ -25,6 +25,7 @@ public class Judge : MonoBehaviour
     // [SerializeField] Text levelText;
 
     public int floorNum = 1;
+    public int qNum = 0; // 問題の種類数を管理するやつ。
     [SerializeField] public Text floorText;
 
     Sequence fadeSequence;
@@ -48,6 +49,9 @@ public class Judge : MonoBehaviour
         // floorNum = 1;
         floorText.text = floorNum.ToString();
         judgeImage.color = new Color(0,0,0,0);
+        GameManager.instance.source = "Images/Questions/"+ floorNum.ToString() + "/";
+        GameManager.instance.level = Resources.LoadAll<Sprite>(GameManager.instance.source);
+        qNum += r.Next(GameManager.instance.level.Length);
         NextQ();
         fadeSequence  = DOTween.Sequence()
                                 .Append(DOTween.ToAlpha(
@@ -101,7 +105,10 @@ public class Judge : MonoBehaviour
                 judgeImage.sprite = correct;
                 soundSource.PlayOneShot(correctSound);
                 UpFloor();
-                if(floorNum==4 || floorNum==9 || floorNum==15 || floorNum==24) timer.Pause();
+                if(floorNum==4 || floorNum==9 || floorNum==15 || floorNum==21) timer.Pause();
+                if(floorNum == 51) {
+                    // どうしよ～
+                }
                 NextQ();
                 break;
             case "wrong":
@@ -122,15 +129,17 @@ public class Judge : MonoBehaviour
 
     public void NextQ()
     {
-        GameManager.instance.source = "Images/Questions/"+ floorNum.ToString() + "/";
-        GameManager.instance.level = Resources.LoadAll<Sprite>(GameManager.instance.source);
-        Debug.Log(GameManager.instance.level);
-        timer.question.sprite = GameManager.instance.level[r.Next(GameManager.instance.level.Length)];
+        // Debug.Log(GameManager.instance.level);
+        qNum = (qNum + 1) % GameManager.instance.level.Length;
+        timer.question.sprite = GameManager.instance.level[qNum];
     }
 
     public void UpFloor()
     {
         floorNum++;
         floorText.text = floorNum.ToString();
+        GameManager.instance.source = "Images/Questions/"+ floorNum.ToString() + "/";
+        GameManager.instance.level = Resources.LoadAll<Sprite>(GameManager.instance.source);
+        qNum += r.Next(GameManager.instance.level.Length-1);
     }
 }

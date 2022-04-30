@@ -7,7 +7,7 @@ using DG.Tweening;
 public class Timer : MonoBehaviour
 {
     public int timeLimit = 180; // 制限時間
-    public int passTime = 0; // パスをしたときに減る時間
+    public int passTime = 10; // パスをしたときに減る時間
 
     System.Random r = new System.Random(); // ランダム変数を用意
     [SerializeField] public Image question; // 問題表示用イメージオブジェクト
@@ -119,9 +119,10 @@ public class Timer : MonoBehaviour
             {
                 leftTime.text = left.ToString("F2");
                 timeGauge.fillAmount = left / timeLimit;
-                gaugeR = 1 - left/60 * 0.5f;
-                gaugeG = left/60;
-                gaugeB = gaugeG/2;
+                // left/60 : 1→0
+                gaugeR = (255 - 133*left/60)/255f;
+                gaugeG = (90  + 102*left/60)/255f;
+                gaugeB = (81  +  11*left/60)/255f;
                 timeGauge.color = new Color(gaugeR, gaugeG, gaugeB);
             }
             else
@@ -173,7 +174,7 @@ public class Timer : MonoBehaviour
     }
 
     public void ResetTimer() {
-        timeGauge.color = new Color(0.5f,1f,0.5f);
+        timeGauge.color = new Color(122/255f, 192/255f, 92/255f);
         timeGauge.fillAmount = 1;
         countTime = 0;
         leftTime.text = timeLimit.ToString();
