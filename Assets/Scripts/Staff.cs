@@ -14,6 +14,7 @@ public class Staff : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject floor;
     [SerializeField] private GameObject controller;
     [SerializeField] private GameObject roomPanel;
+    [SerializeField] private GameObject resetPanel;
 
     private PhotonView hostView;
 
@@ -64,6 +65,9 @@ public class Staff : MonoBehaviourPunCallbacks
         connectionCheck.text = "接続失敗";
     }
 
+    public override void OnDisconnected(DisconnectCause cause) {
+        connectionCheck.text = "通信切断";
+    }
 
     public void GetHostView() {
         if(GameObject.Find("OnlineManager(Clone)")!=null) {
@@ -99,13 +103,17 @@ public class Staff : MonoBehaviourPunCallbacks
     }
 
     public void SendNum() {
-        hostView.RPC("InputFloorNum", hostView.Owner, floorNum);
+        hostView.RPC("InputNum", hostView.Owner, floorNum);
         floorNum = 0;
         floorNumText.text  = floorNum.ToString();
     }
 
     public void Judge(string judgeText) {
         hostView.RPC("Judge", hostView.Owner, judgeText);
+    }
+
+    public void BackQ() {
+        hostView.RPC("BackQ", hostView.Owner);
     }
 
     public void Pause() {
@@ -122,5 +130,17 @@ public class Staff : MonoBehaviourPunCallbacks
 
     public void GameStart() {
         hostView.RPC("GameStart", hostView.Owner);
+    }
+
+    public void OpenResetPanel() {
+        resetPanel.SetActive(true);
+    }
+
+    public void CloseResetPanel() {
+        resetPanel.SetActive(false);
+    }
+
+    public void ResetGame(string resetText) {
+        hostView.RPC("ResetGame", hostView.Owner, resetText);
     }
 }

@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     [SerializeField] GameObject roomPanel;
     [SerializeField] GameObject setting;
+    [SerializeField] GameObject resetPanel;
     [SerializeField] GameObject questionScene;
     [SerializeField] GameObject inputFloorScene;
     [SerializeField] GameObject resultScene;
@@ -84,6 +85,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
         ChangeScene("title");
         roomPanel.SetActive(true);
+        resetPanel.SetActive(false);
 
         // プレイヤー自身の名前を設定する
         PhotonNetwork.NickName = "Host";
@@ -102,6 +104,17 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             if(setting.activeSelf) setting.SetActive(false);
             else setting.SetActive(true);
+        }
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            if(resetPanel.activeSelf) {
+                resetPanel.SetActive(false);
+                Cursor.visible = false;
+            }
+            else {
+                resetPanel.SetActive(true);
+                Cursor.visible = true;
+            }
         }
         if (Input.GetKeyDown(KeyCode.R))
         {
@@ -136,6 +149,10 @@ public class GameManager : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom() {
         connectionCheck.text = "サーバー接続に成功";
         PhotonNetwork.Instantiate("OnlineManager", Vector3.zero, Quaternion.identity);
+    }
+
+    public override void OnDisconnected(DisconnectCause cause) {
+        connectionCheck.text = "サーバーから切断";
     }
 
     public override void OnPlayerEnteredRoom(Player newPlayer) {
@@ -184,10 +201,15 @@ public class GameManager : MonoBehaviourPunCallbacks
             }
     }
 
-    public void InputFloorNum(int num) {
-        allSoundSource.PlayOneShot(choiceSE2);
-        floorNumForInput.text = num.ToString();
-        judge.floorNum = num+1;
+    public void InputNum(int num) {
+        if(titleScene.activeSelf || inputFloorScene.activeSelf) {
+            allSoundSource.PlayOneShot(choiceSE2);
+            floorNumForInput.text = num.ToString();
+            judge.floorNum = num+1;
+        } else if (!isBeforeStart && !isGameStart && questionScene.activeSelf) {
+            if(num>=timer.timeLimit || num<=0) timer.SetTimer(timer.timeLimit);
+            else timer.SetTimer(num);
+        }
     }
 
     public void ChangeScene(string name) {
@@ -210,6 +232,8 @@ public class GameManager : MonoBehaviourPunCallbacks
                 inputFloorScene.SetActive(true);
                 break;
             case "question":
+                timer.startTime = timer.timeLimit;
+                timer.SetTimer(timer.timeLimit);
                 allSoundSource.PlayOneShot(choiceSE3);
                 allBgmSource.Stop();
                 questionScene.SetActive(true);
@@ -228,7 +252,11 @@ public class GameManager : MonoBehaviourPunCallbacks
             ChangeScene("question");
             judge.floorText.text = judge.floorNum.ToString();
         }
-        else if(resultScene.activeSelf) ChangeScene("title");
+        else if(resultScene.activeSelf) {
+            judge.floorNum = 1;
+            floorNumForInput.text = "0";
+            ChangeScene("title");
+        }
     }
 
     public void BackScene() {
@@ -239,9 +267,30 @@ public class GameManager : MonoBehaviourPunCallbacks
     public void GoToResult() {
         resultNum.text = (judge.floorNum-1).ToString();
         ChangeScene("result");
-        timer.ResetTimer();
-        judge.floorNum = 1;
-        floorNumForInput.text = "0";
+        // timer.ResetTimer(); // ここでリセットする必要なくなった
+    }
+
+    public void BackQ_j() {
+        judge.BackQ();
+    }
+
+    public void ResetGame(string name) {
+        switch(name) {
+            case "input":
+                isCount = false;
+                isGameStart = false;
+                timer.bgmSource.Stop();
+                judge.floorNum = 1;
+                floorNumForInput.text = "0";
+                ChangeScene("input");
+                break;
+            case "result":
+                isCount = false;
+                isGameStart = false;
+                timer.bgmSource.Stop();
+                GoToResult();
+                break;
+        }
     }
 
     public void Reconnect() {

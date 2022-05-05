@@ -18,8 +18,18 @@ public class OnlineManager : MonoBehaviour
     }
 
     [PunRPC]
+    private void InputNum(int num) {
+        GameManager.instance.InputNum(num);
+    }
+
+    [PunRPC]
     private void Judge(string judgeText) {
         GameManager.instance.Judge(judgeText);
+    }
+
+    [PunRPC]
+    private void BackQ(string judgeText) {
+        GameManager.instance.BackQ_j();
     }
 
     [PunRPC]
@@ -43,7 +53,7 @@ public class OnlineManager : MonoBehaviour
     }
 
     [PunRPC]
-    private void InputFloorNum(int num) {
-        GameManager.instance.InputFloorNum(num);
+    private void ResetGame(string resetText) {
+        GameManager.instance.ResetGame(resetText);
     }
 }

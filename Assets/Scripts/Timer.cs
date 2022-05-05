@@ -7,6 +7,7 @@ using DG.Tweening;
 public class Timer : MonoBehaviour
 {
     public int timeLimit = 180; // 制限時間
+    public int startTime = 180;
     public int passTime = 10; // パスをしたときに減る時間
 
     System.Random r = new System.Random(); // ランダム変数を用意
@@ -35,7 +36,7 @@ public class Timer : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        ResetTimer();
+        SetTimer(timeLimit);
     }
 
     // Update is called once per frame
@@ -109,7 +110,7 @@ public class Timer : MonoBehaviour
 
         if(GameManager.instance.isGameStart)
         {
-            left = timeLimit - countTime;
+            left = startTime - countTime;
             if(left >= 60)
             {
                 leftTime.text = Mathf.Floor(left).ToString("F0");
@@ -139,16 +140,6 @@ public class Timer : MonoBehaviour
                 DOVirtual.DelayedCall(4f, () => GameManager.instance.GoToResult()).Play();
             }
         }
-
-        if (Input.GetKeyDown (KeyCode.D))
-        {
-            bgmSource.Stop();
-            leftTime.text = "00.00";
-            timeGauge.fillAmount = 0;
-            countDownNum = 3;
-            GameManager.instance.isCount = false;
-            GameManager.instance.isGameStart = false;
-        }
     }
 
     public void Pause()
@@ -173,11 +164,12 @@ public class Timer : MonoBehaviour
         isPause = !isPause;
     }
 
-    public void ResetTimer() {
+    public void SetTimer(int num) {
+        startTime = num;
         timeGauge.color = new Color(122/255f, 192/255f, 92/255f);
-        timeGauge.fillAmount = 1;
+        timeGauge.fillAmount = (float)num/timeLimit;
         countTime = 0;
-        leftTime.text = timeLimit.ToString();
+        leftTime.text = startTime.ToString();
 
         countDownNum = 3;
         countDownText.text = "3";

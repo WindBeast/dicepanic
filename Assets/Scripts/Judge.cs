@@ -88,6 +88,10 @@ public class Judge : MonoBehaviour
             {
                 FadeInOutJudge("skip");
             }
+            if (Input.GetKeyDown(KeyCode.B))
+            {
+                BackQ();
+            }
         }
         if (Input.GetKeyDown(KeyCode.E))
         {
@@ -139,6 +143,20 @@ public class Judge : MonoBehaviour
         // Debug.Log(GameManager.instance.level);
         qNum = (qNum + 1) % GameManager.instance.level.Length;
         timer.question.sprite = GameManager.instance.level[qNum];
+    }
+
+    public void BackQ()
+    {
+        if(floorNum!=1)
+        {
+            floorNum--;
+            floorText.text = floorNum.ToString();
+            GameManager.instance.source = "Images/Questions/"+ floorNum.ToString() + "/";
+            GameManager.instance.level = Resources.LoadAll<Sprite>(GameManager.instance.source);
+            qNum += r.Next(GameManager.instance.level.Length-1);
+            qNum = (qNum + 1) % GameManager.instance.level.Length;
+            timer.question.sprite = GameManager.instance.level[qNum];
+        }
     }
 
     public void UpFloor()
