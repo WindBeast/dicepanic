@@ -103,6 +103,10 @@ public class GameManager : MonoBehaviourPunCallbacks
             if(setting.activeSelf) setting.SetActive(false);
             else setting.SetActive(true);
         }
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            Reconnect();
+        }
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {
             NextScene();
@@ -173,6 +177,9 @@ public class GameManager : MonoBehaviourPunCallbacks
                 timer.countDownPanel.SetActive(true); // カウントダウンパネルを表示
                 timer.cntSource.PlayOneShot(timer.cnt); // カウントダウンSEを鳴らす
                 timer.countDownGauge.enabled = true; // カウントダウンゲージを表示させる
+                source = "Images/Questions/"+ judge.floorNum.ToString() + "/";
+                level = Resources.LoadAll<Sprite>(source);
+                judge.qNum += judge.r.Next(level.Length);
                 judge.NextQ();
             }
     }
@@ -235,5 +242,10 @@ public class GameManager : MonoBehaviourPunCallbacks
         timer.ResetTimer();
         judge.floorNum = 1;
         floorNumForInput.text = "0";
+    }
+
+    public void Reconnect() {
+        connectionCheck.text = "サーバー接続中…";
+        PhotonNetwork.ConnectUsingSettings();
     }
 }

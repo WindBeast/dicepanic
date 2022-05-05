@@ -13,7 +13,7 @@ public class Judge : MonoBehaviour
     [SerializeField] AudioClip passSound;
     [SerializeField] AudioSource soundSource;
 
-    System.Random r = new System.Random();
+    public System.Random r = new System.Random();
 
     [SerializeField] Image judgeImage;
     [SerializeField] Sprite correct;
@@ -84,6 +84,10 @@ public class Judge : MonoBehaviour
             {
                 FadeInOutJudge("pass");
             }
+            if (Input.GetKeyDown(KeyCode.K))
+            {
+                FadeInOutJudge("skip");
+            }
         }
         if (Input.GetKeyDown(KeyCode.E))
         {
@@ -120,8 +124,11 @@ public class Judge : MonoBehaviour
                 judgeImage.color = new Color(0,0.7f,0,0);
                 judgeImage.sprite = pass;
                 soundSource.PlayOneShot(passSound);
-                timer.countTime += timer.passTime;
+                // timer.countTime += timer.passTime;
                 NextQ();
+                break;
+            case "skip":
+                timer.countTime += 10;
                 break;
         }
         fadeSequence.Restart();
