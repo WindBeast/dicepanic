@@ -28,7 +28,7 @@ public class OnlineManager : MonoBehaviour
     }
 
     [PunRPC]
-    private void BackQ(string judgeText) {
+    private void BackQ() {
         GameManager.instance.BackQ_j();
     }
 
