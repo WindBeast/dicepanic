@@ -42,7 +42,8 @@ public class GameManager : MonoBehaviourPunCallbacks
     private RectTransform logoShadowRect;
 
     [SerializeField] private Text floorNumForInput;
-    [SerializeField] private Text resultNum;
+    [SerializeField] public Text resultNum;
+    [SerializeField] public GameObject congratulations;
     [SerializeField] private Text cardText;
     // [SerializeField] private Text testText;
 
@@ -255,6 +256,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         else if(resultScene.activeSelf) {
             judge.floorNum = 1;
             floorNumForInput.text = "0";
+            GameManager.instance.congratulations.SetActive(false);
             ChangeScene("title");
         }
     }

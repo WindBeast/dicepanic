@@ -10,7 +10,9 @@ public class Judge : MonoBehaviour
     [SerializeField] Timer timer;
     [SerializeField] AudioClip correctSound;
     [SerializeField] AudioClip wrongSound;
+    [SerializeField] AudioClip clearSound;
     [SerializeField] AudioClip passSound;
+    [SerializeField] AudioClip fanfare;
     [SerializeField] AudioSource soundSource;
 
     public System.Random r = new System.Random();
@@ -109,15 +111,27 @@ public class Judge : MonoBehaviour
         switch (judgeText)
         {
             case "correct":
-                judgeImage.color = new Color(1,0,0,0);
-                judgeImage.sprite = correct;
-                soundSource.PlayOneShot(correctSound);
-                UpFloor();
-                if(floorNum==4 || floorNum==9 || floorNum==15 || floorNum==21) timer.Pause();
-                if(floorNum == 51) {
-                    // どうしよ～
+                if(floorNum == 50) {
+                    judgeImage.color = new Color(1,0,0,0);
+                    judgeImage.sprite = correct;
+                    soundSource.PlayOneShot(clearSound);
+                    timer.bgmSource.Stop();
+                    GameManager.instance.isCount = false;
+                    GameManager.instance.isGameStart = false;
+                    DOVirtual.DelayedCall(3f, () => soundSource.PlayOneShot(fanfare)).Play();
+                    DOVirtual.DelayedCall(9f, () => {
+                        GameManager.instance.congratulations.SetActive(true);
+                        GameManager.instance.resultNum.text = "全50";
+                        GameManager.instance.ChangeScene("result");
+                    }).Play();
+                } else {
+                    judgeImage.color = new Color(1,0,0,0);
+                    judgeImage.sprite = correct;
+                    soundSource.PlayOneShot(correctSound);
+                    UpFloor();
+                    if(floorNum==4 || floorNum==8 || floorNum==13 || floorNum==18) timer.Pause();
+                    NextQ();
                 }
-                NextQ();
                 break;
             case "wrong":
                 judgeImage.color = new Color(0,0,1,0);
